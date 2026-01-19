@@ -2,7 +2,19 @@ print("=== ЭТО МОЙ APP.PY ===")
 from flask import Flask, render_template, request, redirect, url_for, session
 import json
 import os
+from sqlalchemy import create_engine, text
 
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+engine = create_engine(DATABASE_URL)
+
+try:
+    with engine.connect() as conn:
+        conn.execute(text("SELECT 1"))
+        print(" DATABASE CONNECTED")
+except Exception as e:
+    print("DATABASE ERROR:", e)
+    
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 USERS_FILE = os.path.join(BASE_DIR, "users.json")
 MESSAGES_FILE = os.path.join(BASE_DIR, "messages.json")
