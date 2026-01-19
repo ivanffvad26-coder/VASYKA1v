@@ -44,7 +44,7 @@ def register():
         password = request.form["password"]
 
         if not os.path.exists(USERS_FILE):
-            with open(USERS_FILE, "W") as f:
+            with open(USERS_FILE, "w") as f:
                 json.dump({}, f)
 
         with open(USERS_FILE, "r") as f:
