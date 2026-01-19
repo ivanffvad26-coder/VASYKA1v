@@ -1,1 +1,1 @@
-web: guincorn messanger.sever.app"app
+web: guincorn messanger.sever.app:app

@@ -3,6 +3,20 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import json
 import os
 from sqlalchemy import create_engine, text
+from flask import Flask
+from db import init_db
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Messanger backend is running"
+
+# иницилизация базы
+init_db()
+
+if __name__ == "__main__":
+    app.run()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -14,7 +28,7 @@ try:
         print(" DATABASE CONNECTED")
 except Exception as e:
     print("DATABASE ERROR:", e)
-    
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 USERS_FILE = os.path.join(BASE_DIR, "users.json")
 MESSAGES_FILE = os.path.join(BASE_DIR, "messages.json")
