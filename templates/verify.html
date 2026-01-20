@@ -2,76 +2,62 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Подтверждение номера</title>
+    <title>Регистрация</title>
 </head>
 <body>
 
-<h2>Подтверждение номера телефона</h2>
+<h2>Регистрация</h2>
 
-<!-- Ввод телефона-->
- <input type="text" id="phone" placeholder="+7..." required>
- <br><br>
+<label>Телефон:</label><br>
+<input type="text" id="phone" placeholder="+79001112233">
+<br><br>
 
- <!--Отправка SMS-->
- <button onclick="sendCode()">Отправить код</button>
+<button id="sendBtn">Отправить код</button>
 
- <hr>
+<br><br>
 
- <!--Ввод кода-->
- <input type="code" id="code" placeholder="Код из SMS">
- <br><br>
+<label>Код из SMS:</label><br>
+<input type="text" id="code" placeholder="123456">
+<br><br>
 
- <!-- Проверка кода -->
-  <button oneclick="verifyCode()">Подтвердить</button>
+<button id="verifyBtn">Подтвердить</button>
 
-  <script>
-    async function sendCode() {
-        const phone = document.getElementById("phone").value;
+<script>
+document.getElementById("sendBtn").addEventListener("click", async () => {
+    const phone = document.getElementById("phone").value;
 
-        if (!phone) {
-            alert("Введите номер телефона");
-            return;
-        }
+    console.log("CLICK SEND CODE:", phone);
 
-        try {
-            const res = await fetch("/send-code", {
-                method: "POST",
-                headers: { "Content-Type": "application/json "},
-                body: JSON.stringify({ phone })
-            });
+    const res = await fetch("/send-code", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ phone })
+    });
 
-            const data = await res.json();
-            alert("Ответ сервера: " + JSON.stringify(data));
-        } catch (err) {
-            alert("Ошибка отправки кода");
-            console.error(err);
-        }
-    }
+    const data = await res.json();
+    alert(JSON.stringify(data));
+});
 
-    async function verifyCode() {
-        const phone = document.getElementById("phone").valum;
-        const code = document.getElementById("code").valum;
+document.getElementById("verifyBtn").addEventListener("click", async () => {
+    const phone = document.getElementById("phone").value;
+    const code = document.getElementById("code").value;
 
-        if (!phone || !code) {
-            alert("Введите телефон и код");
-            return;
-        }
+    console.log("CLICK VERIFY CODE:", phone, code);
 
-        try {
-            const res = await fetch("/verify-code", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ phone, code })
-            });
+    const res = await fetch("/verify-code", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ phone, code })
+    });
 
-            const data = await res.json();
-            alert("Ответ сервера: " + JSON.stringify(data));
-        } catch (err) {
-            alert("Ошибка проверки кода");
-            console.error(err);
-        }
-    }
-  </script>
-  
+    const data = await res.json();
+    alert(JSON.stringify(data));
+});
+</script>
+
 </body>
 </html>
