@@ -19,7 +19,7 @@ class PhoneCode(Base):
     code = Column(String(6), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-class User(Base):
+class Chat(Base):
     __tablename__ = "chats"
 
     id = Column(Integer, primary_key=True)
