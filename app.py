@@ -1,18 +1,22 @@
 print("=== ЭТО МОЙ APP.PY ===")
+
 from flask import Flask, render_template, request, redirect, url_for, session
 import json
 import os
 from sqlalchemy import create_engine, text
-from flask import Flask
+
+from auth import auth
 from db import init_db
 
 app = Flask(__name__)
+app.secret_key = "secret-key"
+
+app.register_blueprint(auth)
 
 @app.route("/")
 def home():
-    return "Messanger backend is running"
+    return "Messenger backend is running"
 
-# иницилизация базы
 init_db()
 
 if __name__ == "__main__":
