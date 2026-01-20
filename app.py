@@ -2,7 +2,7 @@ print("=== ЭТО МОЙ APP.PY ===")
 
 from flask import Flask, render_template, request, redirect, url_for, session
 from auth import auth
-from json import json
+import json
 from db import init_db
 
 app = Flask(__name__)
