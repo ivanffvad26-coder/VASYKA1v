@@ -1,16 +1,16 @@
 print("=== ЭТО МОЙ APP.PY ===")
 
 from flask import Flask, render_template, request, redirect, url_for, session
-import json
-import os
-from sqlalchemy import create_engine, text
-
 from auth import auth
+from json import json
+from db import init_db
 
 app = Flask(__name__)
 app.secret_key = "secret-key"
 
 app.register_blueprint(auth)
+
+init_db()
 
 @app.route("/")
 def home():
@@ -19,17 +19,6 @@ def home():
 
 if __name__ == "__main__":
     app.run()
-
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-engine = create_engine(DATABASE_URL)
-
-try:
-    with engine.connect() as conn:
-        conn.execute(text("SELECT 1"))
-        print(" DATABASE CONNECTED")
-except Exception as e:
-    print("DATABASE ERROR:", e)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 USERS_FILE = os.path.join(BASE_DIR, "users.json")
