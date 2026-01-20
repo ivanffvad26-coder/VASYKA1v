@@ -3,7 +3,7 @@ from db import Base
 
 
 class PhoneCode(Base):
-    tablename = "phone_codes"
+    tablename = "phone_codes"   # ← КРИТИЧНО
 
     id = Column(Integer, primary_key=True)
     phone = Column(String, nullable=False, index=True)

@@ -2,7 +2,6 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-# DATABASE_URL для Render (PostgreSQL) или локально SQLite
 DATABASE_URL = os.environ.get(
     "DATABASE_URL",
     "sqlite:///database.db"
@@ -28,6 +27,5 @@ def get_db():
 
 
 def init_db():
-    # импорт ТОЛЬКО здесь — важно
-    from models import PhoneCode
+    import models  # ВАЖНО: просто импорт, без Base.metadata здесь
     Base.metadata.create_all(bind=engine)
