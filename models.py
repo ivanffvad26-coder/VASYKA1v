@@ -41,3 +41,7 @@ class Message(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     text = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+from db import engine
+
+Base.metadata.create_all(bind=engine)

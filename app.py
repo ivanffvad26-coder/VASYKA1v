@@ -6,7 +6,6 @@ import os
 from sqlalchemy import create_engine, text
 
 from auth import auth
-from db import init_db
 
 app = Flask(__name__)
 app.secret_key = "secret-key"
@@ -17,7 +16,6 @@ app.register_blueprint(auth)
 def home():
     return "Messenger backend is running"
 
-init_db()
 
 if __name__ == "__main__":
     app.run()
