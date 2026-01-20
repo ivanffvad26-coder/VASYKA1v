@@ -1,6 +1,6 @@
-Flask
-gunicorn
-SQLAlchemy
+flask
+flask-cors
+sqlalchemy
 psycopg2-binary
+puthon-dotenv
 twilio
-python-dotenv

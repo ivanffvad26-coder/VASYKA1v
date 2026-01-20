@@ -1,50 +1,36 @@
-from flask import Blueprint, request, jsonify, render_template, redirect, url_for
-import random
-from db import get_db
-from models import PhoneCode
-from sms import send_sms
+import os
+from twilio.rest import Client
+from sqlalchemy.orm import Session
+from models import User
 
-auth = Blueprint("auth", __name__)
+TWILIO_SID = os.environ["TWILIO_ACCOUNT_SID"]
+TWILIO_TOKEN = os.environ["TWILIO_AUTH_TOKEN"]
+VERIFY_SID = os.environ["TWILIO_VERIFY_SID"]
 
-@auth.route("/register")
-def register():
-    return render_template("register.html")
+client = Client(TWILIO_SID, TWILIO_TOKEN)
 
-@auth.route("/login")
-def login():
-    return render_template("login.html")
 
-@auth.route("/send-code", methods=["POST"])
-def send_code():
-    phone = request.json.get("phone")
-    if not phone:
-        return {"error": "phone required"}, 400
+def send_code(phone: str):
+    client.verify.services(VERIFY_SID).verifications.create(
+        to=phone,
+        channel="sms"
+    )
 
-    code = str(random.randint(100000, 999999))
 
-    db = get_db()
-    db.query(PhoneCode).filter_by(phone=phone).delete()
-    db.add(PhoneCode(phone=phone, code=code))
-    db.commit()
-    db.close()
+def check_code(phone: str, code: str, db: Session):
+    result = client.verify.services(VERIFY_SID).verification_checks.create(
+        to=phone,
+        code=code
+    )
 
-    send_sms(phone, code)
+    if result.status != "approved":
+        return None
 
-    return {"message": "SMS sent"}
+    user = db.query(User).filter_by(phone=phone).first()
+    if not user:
+        user = User(phone=phone)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
 
-@auth.route("/verify-code", methods=["POST"])
-def verify_code():
-    phone = request.json.get("phone")
-    code = request.json.get("code")
-
-    if not phone or not code:
-        return {"error": "phone and code required"}, 400
-
-    db = get_db()
-    record = db.query(PhoneCode).filter_by(phone=phone, code=code).first()
-    db.close()
-
-    if not record:
-        return {"error": "invalid code"}, 400
-
-    return {"message": "success"}
+    return user
