@@ -1,36 +1,46 @@
-import os
-from twilio.rest import Client
+import random
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from models import User
 
-TWILIO_SID = os.environ["TWILIO_ACCOUNT_SID"]
-TWILIO_TOKEN = os.environ["TWILIO_AUTH_TOKEN"]
-VERIFY_SID = os.environ["TWILIO_VERIFY_SID"]
+from db import SessionLocal
+from models import User, PhoneCode
+from sms import send_sms
 
-client = Client(TWILIO_SID, TWILIO_TOKEN)
-
-
-def send_code(phone: str):
-    client.verify.services(VERIFY_SID).verifications.create(
-        to=phone,
-        channel="sms"
-    )
+auth = APIRouter(prefix="/auth")
 
 
-def check_code(phone: str, code: str, db: Session):
-    result = client.verify.services(VERIFY_SID).verification_checks.create(
-        to=phone,
-        code=code
-    )
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-    if result.status != "approved":
-        return None
+
+@auth.post("/send-code")
+def send_code(phone: str, db: Session = Depends(get_db)):
+    code = str(random.randint(100000, 999999))
+
+    record = PhoneCode(phone=phone, code=code)
+    db.add(record)
+    db.commit()
+
+    send_sms(phone, code)
+
+    return {"status": "code_sent"}
+
+
+@auth.post("/verify")
+def verify_code(phone: str, code: str, db: Session = Depends(get_db)):
+    record = db.query(PhoneCode).filter_by(phone=phone, code=code).first()
+
+    if not record:
+        raise HTTPException(status_code=400, detail="Неверный код")
 
     user = db.query(User).filter_by(phone=phone).first()
     if not user:
         user = User(phone=phone)
         db.add(user)
         db.commit()
-        db.refresh(user)
 
-    return user
+    return {"status": "ok", "user_id": user.id}

@@ -1,6 +1,6 @@
-flask
-flask-cors
+fastapi
+uvicorn
+gunicorn
 sqlalchemy
 psycopg2-binary
-puthon-dotenv
 twilio

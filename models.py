@@ -11,7 +11,7 @@ class User(Base):
 
 
 class PhoneCode(Base):
-    tablename = "phone_codes"   # ← ВОТ ЭТОГО У ТЕБЯ НЕ БЫЛО
+    tablename = "phone_codes"
 
     id = Column(Integer, primary_key=True)
     phone = Column(String, nullable=False)

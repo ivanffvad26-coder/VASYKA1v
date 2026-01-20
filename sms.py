@@ -1,16 +1,16 @@
 import os
 from twilio.rest import Client
 
-account_sid = os.environ.get("TWILIO_ACCOUNT_SID")
-auth_token = os.environ.get("TWILIO_AUTH_TOKEN")
-twilio_phone = os.environ.get("TWILIO_PHONE")
+TWILIO_SID = os.environ["TWILIO_SID"]
+TWILIO_TOKEN = os.environ["TWILIO_TOKEN"]
+TWILIO_PHONE = os.environ["TWILIO_PHONE"]
 
-client = Client(account_sid, auth_token)
+client = Client(TWILIO_SID, TWILIO_TOKEN)
 
-def send_sms(phone, code):
-    message = client.messages.create(
+
+def send_sms(phone: str, code: str):
+    client.messages.create(
         body=f"Ваш код подтверждения: {code}",
-        from_=twilio_phone,
+        from_=TWILIO_PHONE,
         to=phone
     )
-    return message.sid
