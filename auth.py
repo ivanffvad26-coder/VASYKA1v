@@ -1,5 +1,6 @@
+import random
 from Flask import Blueprint, request, session
-from database import SessionLocal
+from db import db
 from models import User, PhoneCode
 from sms import send_sms
 
