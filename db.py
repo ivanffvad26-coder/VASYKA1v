@@ -1,8 +1,12 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base
 
-DATABASE_URL = "sqlite:///db.sqlite3"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "db.sqlite3")
+
+DATABASE_URL = f"sqlite:///{DB_PATH}"
 
 engine = create_engine(
     DATABASE_URL,
@@ -10,6 +14,9 @@ engine = create_engine(
 )
 
 SessionLocal = sessionmaker(bind=engine)
+
+def get_db():
+    return SessionLocal()
 
 def init_db():
     Base.metadata.create_all(bind=engine)
