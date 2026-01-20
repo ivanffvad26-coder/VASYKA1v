@@ -22,7 +22,7 @@
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
-                phone: document.getElementById("phone").volue
+                phone: document.getElementById("phone").value
             })
         })
         .then(r => r.json())
