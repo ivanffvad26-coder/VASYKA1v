@@ -8,11 +8,40 @@
 <body>
     <h2>Регистрация</h2>
 
-    <form method="post">
-        <input type=text name="username" placeholder="Логин" required>
-        <input type="password" name="password"type="password" placeholder="Пароль" required>
-        <button type="submit">Создать</button>
-    </form>
+    <input type="text" id="phone" placeholder="+79998887766">
+    <button type="button" oneclick="sendCode()">Отправить код</button>
+
+    <br><br>
+
+    <input type="text" id="code" placeholder="Код из SMS">
+    <button type="button" oneclick="verifyCode()">Подтвердить</buttone>
+
+    <script>
+    function sendCode() {
+        fetch("/send-code",{
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                phone: document.getElementById("phone").volue
+            })
+        })
+        .then(r => r.json())
+        .then(d => alert(d.message || d.error));
+    }
+
+    function verifyCode() {
+        fetch("/verify-code", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                phone: document.getElementById("phone").value,
+                code: document.getElementById("code").value
+            })
+        })
+        .then(r => r.json())
+        .then(d => alert(d.message || d.error));
+    }
+    </script>
 
     <a href="/login">Назад ко входу</a>
 </body>
