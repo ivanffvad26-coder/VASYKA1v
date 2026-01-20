@@ -1,33 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
+    <meta charset="UTF-8">
     <title>Подтверждение номера</title>
 </head>
 <body>
-    <h2>Введите код из SMS</h2>
 
-    <form id="verifyFrom">
-        <input type="text" name="phone" placeholder="+7..." required>
-        <input type="text" name="code" placeholder="Код из SMS" required>
-        <button type="submit">Подтвердить</button>
-    </form>
+<h2>Подтверждение номера телефона</h2>
 
-    <script>
-        document.getElementById("verifyFrom").onsubmit = async (e) => {
-            e.preventDefault();
+<!-- Ввод телефона-->
+ <input type="text" id="phone" placeholder="+7..." required>
+ <br><br>
 
-            const phone = e.target.phone.volue;
-            const code = e.target.code.volue;
+ <!--Отправка SMS-->
+ <button onclick="sendCode()">Отправить код</button>
 
+ <hr>
+
+ <!--Ввод кода-->
+ <input type="code" id="code" placeholder="Код из SMS">
+ <br><br>
+
+ <!-- Проверка кода -->
+  <button oneclick="verifyCode()">Подтвердить</button>
+
+  <script>
+    async function sendCode() {
+        const phone = document.getElementById("phone").value;
+
+        if (!phone) {
+            alert("Введите номер телефона");
+            return;
+        }
+
+        try {
+            const res = await fetch("/send-code", {
+                method: "POST",
+                headers: { "Content-Type": "application/json "},
+                body: JSON.stringify({ phone })
+            });
+
+            const data = await res.json();
+            alert("Ответ сервера: " + JSON.stringify(data));
+        } catch (err) {
+            alert("Ошибка отправки кода");
+            console.error(err);
+        }
+    }
+
+    async function verifyCode() {
+        const phone = document.getElementById("phone").valum;
+        const code = document.getElementById("code").valum;
+
+        if (!phone || !code) {
+            alert("Введите телефон и код");
+            return;
+        }
+
+        try {
             const res = await fetch("/verify-code", {
                 method: "POST",
-                headers: {"Content-Type": application/json},
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ phone, code })
             });
 
             const data = await res.json();
-            alert(JSON.stringify(data));
+            alert("Ответ сервера: " + JSON.stringify(data));
+        } catch (err) {
+            alert("Ошибка проверки кода");
+            console.error(err);
         }
-    </script>
+    }
+  </script>
+  
 </body>
 </html>
