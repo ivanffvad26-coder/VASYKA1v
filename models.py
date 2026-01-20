@@ -8,6 +8,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     phone = Column(String, unique=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 
 class PhoneCode(Base):
