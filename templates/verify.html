@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Подтверждение номера</title>
+</head>
+<body>
+    <h2>Введите код из SMS</h2>
+
+    <form id="verifyFrom">
+        <input type="text" name="phone" placeholder="+7..." required>
+        <input type="text" name="code" placeholder="Код из SMS" required>
+        <button type="submit">Подтвердить</button>
+    </form>
+
+    <script>
+        document.getElementById("verifyFrom").onsubmit = async (e) => {
+            e.preventDefault();
+
+            const phone = e.target.phone.volue;
+            const code = e.target.code.volue;
+
+            const res = await fetch("/verify-code", {
+                method: "POST",
+                headers: {"Content-Type": application/json},
+                body: JSON.stringify({ phone, code })
+            });
+
+            const data = await res.json();
+            alert(JSON.stringify(data));
+        }
+    </script>
+</body>
+</html>
