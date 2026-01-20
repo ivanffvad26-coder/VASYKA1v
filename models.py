@@ -3,7 +3,7 @@ from db import Base
 
 
 class User(Base):
-    tablename = "users"
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)
     phone = Column(String, unique=True, nullable=False)
