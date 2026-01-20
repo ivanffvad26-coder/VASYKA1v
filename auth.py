@@ -1,17 +1,25 @@
+from flask import Blueprint, request, jsonify, render_template, redirect, url_for
 import random
-from flask import Blueprint, request, session, redirect, url_for
-from models import User, PhoneCode
-from sms import send_sms
 from db import get_db
+from models import PhoneCode
+from sms import send_sms
 
 auth = Blueprint("auth", __name__)
+
+@auth.route("/register")
+def register():
+    return render_template("register.html")
+
+@auth.route("/login")
+def login():
+    return render_template("login.html")
 
 @auth.route("/send-code", methods=["POST"])
 def send_code():
     phone = request.json.get("phone")
     if not phone:
-        return {"error": "Phone required"}, 400
-    
+        return {"error": "phone required"}, 400
+
     code = str(random.randint(100000, 999999))
 
     db = get_db()
@@ -24,35 +32,19 @@ def send_code():
 
     return {"message": "SMS sent"}
 
-@auth.route("/verify-code", methods={"POST"})
+@auth.route("/verify-code", methods=["POST"])
 def verify_code():
     phone = request.json.get("phone")
     code = request.json.get("code")
 
     if not phone or not code:
-        return {"error": "Phone and code required"}, 400
+        return {"error": "phone and code required"}, 400
 
     db = get_db()
-    record = db.query(PhoneCode).filter_by(
-        phone=phone,
-        code=code
-        ).first()
-
-    if not record:
-        db.close()
-        return {"error": "Invalid code"}, 400
-    
-    user = db.query(User).filter_by(phone=phone).first()
-
-    if not user:
-        user = User(phone=phone)
-        db.add(user)
-        db.commit()
-
-    session["user_id"] = user.id
-
-    db.delete(record)
-    db.commit()
+    record = db.query(PhoneCode).filter_by(phone=phone, code=code).first()
     db.close()
 
-    return {"message": "Logged in"}
+    if not record:
+        return {"error": "invalid code"}, 400
+
+    return {"message": "success"}
